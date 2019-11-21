@@ -7,24 +7,41 @@ int main (int argc, char** argv){
     MPI_Status status;
 
     int N;
+    double *U = new double [N-1];
+    double *F = new double [N-1];
+
+    char fileName[20] = "file1.txt"; 
 
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
     if (rank == 0) {
-        printf("rank: %d\nsize: %d\n\nEnter mesh size: ", rank, size);
+        printf("rank: %d\nsize: %d\n\nEnter mesh count: ", rank, size);
         scanf("%d", &N);
+        readFile(fileName);
     }
-
+    //начальные условия (ступенька)
+    for (int i = 0; i < N/10; i++) {
+		U[i] = 1;
+	}
+    for (int i = N/10; i < N; i++) {
+		U[i] = 0;
+	}
     
+
+
+    delete [] U;
+    delete [] F;
+    U = NULL;
+    F = NULL;
     
     MPI_Finalize();
     return 0;
 }
 
 
-void LV (double U[], double F[], double fun, double dt, double dx, int N){
+void LW (double U[], double F[], double fun, double dt, double dx, int N){
 //Potter p.97                             ����� �����-���������
 double *U12 = new double [N-1];
 double *F12 = new double [N-1];
@@ -44,4 +61,26 @@ delete [] U12;
 delete [] F12;
 U12 = NULL;
 F12 = NULL;
+}
+
+int readFile (char fileName) {
+    FILE *file = fopen(fileName, "r");
+    struct params {
+		char name[20]; 
+		double value; 
+	};
+    struct params option[10];
+	char n=0;
+    if (file == NULL) {
+        printf("File not found!");
+    }
+    else {
+    // Работа с файлом
+        while (fscanf (file, "%s%u%f", option[i].name, &(option[i].value)) != EOF) {
+		printf("%s %.2f\n", option[i].name, option[i].value); 
+		n++;
+	}
+        fclose(file);
+    }
+    return 0;
 }
