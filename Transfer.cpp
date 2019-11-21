@@ -1,6 +1,6 @@
 #include <mpi.h>
 #include <stdio.h>
-
+int readFile (char*);
 int main (int argc, char** argv){
     int size; // кол-во процессов
     int rank; // уникальный идентификатор процессов
@@ -29,7 +29,7 @@ int main (int argc, char** argv){
 		U[i] = 0;
 	}
     
-
+    
 
     delete [] U;
     delete [] F;
@@ -63,21 +63,20 @@ U12 = NULL;
 F12 = NULL;
 }
 
-int readFile (char fileName) {
+int readFile (char* fileName) {
     FILE *file = fopen(fileName, "r");
     struct params {
 		char name[20]; 
 		double value; 
 	};
     struct params option[10];
-	char n=0;
+	int n=0;
     if (file == NULL) {
         printf("File not found!");
     }
     else {
-    // Работа с файлом
-        while (fscanf (file, "%s%u%f", option[i].name, &(option[i].value)) != EOF) {
-		printf("%s %.2f\n", option[i].name, option[i].value); 
+        while (fscanf (file, "%s%lf", option[n].name, &(option[n].value)) != EOF) {
+		printf("%s %.2f\n", option[n].name, option[n].value);
 		n++;
 	}
         fclose(file);
